@@ -40,6 +40,8 @@ import FeatureView from "./childComps/FeatureView";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
+import { debounce } from "common/utils";
+
 export default {
   name: "Home",
   components: {
@@ -78,24 +80,13 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    const refresh = this.debounce(this.$refs.scroll.refresh, 100);
+    const refresh = debounce(this.$refs.scroll.refresh, 100);
     this.$bus.$on("itemImageLoad", () => {
       refresh();
       // this.debounce(this.$refs.scroll.refresh, 100)();
     });
   },
   methods: {
-    debounce(fn, delay) {
-      let timer = null;
-      return function (...args) {
-        if (timer) {
-          clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-          fn.apply(this, args);
-        }, delay);
-      };
-    },
     // debounce(fn, delay) {
     //   let timer = null;
     //   return function () {
