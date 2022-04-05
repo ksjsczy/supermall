@@ -1,6 +1,13 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control
+      class="tab-control"
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      v-show="isTabFixed"
+    ></tab-control>
     <scroll
       class="content"
       ref="scroll"
@@ -9,13 +16,16 @@
       @scroll="contentScroll"
       @pullingUp="loadMore"
     >
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper
+        :banners="banners"
+        @swiperImageLoad="swiperImageLoad"
+      ></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
       <tab-control
-        class="tab-control"
         :titles="['流行', '新款', '精选']"
         @tabClick="tabClick"
+        ref="tabControl2"
       ></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
@@ -66,6 +76,9 @@ export default {
       currentType: "pop",
       isShow: false,
       count: 0,
+      tabOffsetTop: 632,
+      isTabFixed: false,
+      saveY: 0,
     };
   },
   computed: {
@@ -86,16 +99,14 @@ export default {
       // this.debounce(this.$refs.scroll.refresh, 100)();
     });
   },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.scroll.y;
+  },
   methods: {
-    // debounce(fn, delay) {
-    //   let timer = null;
-    //   return function () {
-    //     if (timer) {
-    //       clearTimeout(timer);
-    //     }
-    //     timer = setTimeout(fn, delay);
-    //   };
-    // },
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
         this.banners = res.data.data.banner.list;
@@ -105,7 +116,7 @@ export default {
     getHomeGoods(type) {
       const page = this.goods[type].page++ + 1;
       getHomeGoods(type, page).then((res) => {
-        console.log(this.goods);
+        // console.log(this.goods);
         this.goods[type].list.push(...res.data.data.list);
       });
     },
@@ -121,20 +132,24 @@ export default {
           this.currentType = "sell";
           break;
       }
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0); //$refs区别于使用document.queryselector，$refs只获取当前vue文件内的元素
     },
     contentScroll(position) {
-      if (position.y < -1000) {
-        this.isShow = true;
-      } else {
-        this.isShow = false;
-      }
+      // console.log(position);
+      this.isShow = -position.y > 1000;
+      this.isTabFixed = -position.y > this.tabOffsetTop;
+      // this.saveY = position.y;
     },
     loadMore() {
       this.getHomeGoods(this.currentType);
       this.$refs.scroll.finishPullUp();
+    },
+    swiperImageLoad() {
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
     },
   },
 };
@@ -142,21 +157,20 @@ export default {
 <style scoped>
 #home {
   position: relative;
-  padding-top: 44px;
+  /* padding-top: 44px; */
   height: 100vh;
 }
 .home-nav {
-  position: fixed;
+  /* position: fixed;
   left: 0;
   right: 0;
-  top: 0;
-  z-index: 2;
+  top: 0; */
+  /* z-index: 20; */
   background-color: var(--color-tint);
   color: #fff;
 }
 .tab-control {
-  position: sticky;
-  top: 44px;
+  position: relative;
   background-color: #fff;
 }
 /* .content {
@@ -169,5 +183,6 @@ export default {
   bottom: 49px;
   left: 0;
   right: 0;
+  overflow: hidden;
 }
 </style>
