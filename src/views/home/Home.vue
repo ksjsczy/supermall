@@ -50,7 +50,8 @@ import FeatureView from "./childComps/FeatureView";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
-import { debounce } from "common/utils";
+// import { debounce } from "common/utils";
+import { itemListenerMixin } from "common/mixin";
 
 export default {
   name: "Home",
@@ -79,8 +80,10 @@ export default {
       tabOffsetTop: 632,
       isTabFixed: false,
       saveY: 0,
+      // itemImageLoader: null,
     };
   },
+  mixins: [itemListenerMixin],
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
@@ -93,11 +96,12 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    const refresh = debounce(this.$refs.scroll.refresh, 100);
-    this.$bus.$on("itemImageLoad", () => {
-      refresh();
-      // this.debounce(this.$refs.scroll.refresh, 100)();
-    });
+    // const refresh = debounce(this.$refs.scroll.refresh, 100);
+    // this.itemImageLoader = () => {
+    //   refresh();
+    //   // this.debounce(this.$refs.scroll.refresh, 100)();
+    // };
+    // this.$bus.$on("itemImageLoad", this.itemImageLoader);
   },
   activated() {
     this.$refs.scroll.scrollTo(0, this.saveY, 0);
@@ -105,6 +109,7 @@ export default {
   },
   deactivated() {
     this.saveY = this.$refs.scroll.scroll.y;
+    this.$bus.$off("itemImageLoad", this.itemImageLoader);
   },
   methods: {
     getHomeMultidata() {
