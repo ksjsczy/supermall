@@ -17,7 +17,7 @@ export default {
     },
     click: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     pullUpLoad: {
       type: Boolean,

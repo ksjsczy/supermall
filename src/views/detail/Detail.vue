@@ -31,14 +31,16 @@
       @click.native="backClick"
       v-show="isShow"
     ></back-top>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
+    <!-- <toast :message="message" class="toast" :show="show"></toast> -->
   </div>
 </template>
 
 <script>
 import Scroll from "components/common/scroll/Scroll.vue";
+// import Toast from "components/common/toast/Toast.vue";
 import GoodsList from "components/content/goods/GoodsList.vue";
-import BackTop from "components/content/backTop/BackTop";
+// import BackTop from "components/content/backTop/BackTop";
 
 import DetailSwiper from "./childComps/DetailSwiper.vue";
 import DetailNavBar from "./childComps/DetailNavBar.vue";
@@ -50,7 +52,8 @@ import DetailCommentInfo from "./childComps/DetailCommentInfo.vue";
 import DetailBottomBar from "./childComps/DetailBottomBar.vue";
 
 // import { debounce } from "common/utils";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
+import { mapActions } from "vuex";
 
 import {
   getDetail,
@@ -73,15 +76,18 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTopYs: [0, -500, -1000, -1500],
-      isShow: false,
+      show: false,
+      message: "",
+      // isShow: false,
       // itemImageLoader: null,
     };
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   components: {
     Scroll,
+    // Toast,
     GoodsList,
-    BackTop,
+    // BackTop,
     DetailNavBar,
     DetailSwiper,
     DetailBaseInfo,
@@ -136,8 +142,10 @@ export default {
   },
   destroyed() {
     this.$bus.$off("itemImageLoad", this.itemImageLoader);
+    this.$toast.isShow = false;
   },
   methods: {
+    ...mapActions(["addCart"]),
     imageLoad() {
       this.$refs.scroll.refresh();
       this.themeTopYs[1] = -this.$refs.param.$el.offsetTop;
@@ -162,9 +170,35 @@ export default {
       //backTop
       this.isShow = -position.y > 1000;
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0); //$refs区别于使用document.queryselector，$refs只获取当前vue文件内的元素
+
+    addToCart() {
+      //获取购物车需要展示的信息
+      const product = {
+        image: this.topImages[0],
+        title: this.goods.title,
+        desc: this.goods.desc,
+        price: this.goods.realPrice,
+        iid: this.iid,
+        count: 1,
+      };
+      //将商品添加到购物车里
+      // this.$store.commit("addCart", product);
+      // this.$store.dispatch("addCart", product).then((res) => {
+      //   console.log(res);
+      // });
+      this.addCart(product).then((res) => {
+        // this.message = res;
+        // this.show = true;
+        // setTimeout(() => {
+        //   this.show = false;
+        // }, 2000);
+        // this.$toast.show(res, 2000);
+        this.$toast.show(res);
+      });
     },
+    // backClick() {
+    //   this.$refs.scroll.scrollTo(0, 0); //$refs区别于使用document.queryselector，$refs只获取当前vue文件内的元素
+    // },
   },
 };
 </script>

@@ -38,7 +38,7 @@ import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/common/scroll/Scroll";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
-import BackTop from "components/content/backTop/BackTop";
+// import BackTop from "components/content/backTop/BackTop";
 
 import HomeSwiper from "./childComps/HomeSwiper";
 import RecommendView from "./childComps/RecommendView";
@@ -47,7 +47,7 @@ import FeatureView from "./childComps/FeatureView";
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
 // import { debounce } from "common/utils";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 
 export default {
   name: "Home",
@@ -56,7 +56,7 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
-    BackTop,
+    // BackTop,
     HomeSwiper,
     RecommendView,
     FeatureView,
@@ -71,7 +71,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
-      isShow: false,
+      // isShow: false,
       count: 0,
       tabOffsetTop: 632,
       isTabFixed: false,
@@ -79,7 +79,7 @@ export default {
       // itemImageLoader: null,
     };
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
@@ -136,14 +136,12 @@ export default {
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0); //$refs区别于使用document.queryselector，$refs只获取当前vue文件内的元素
-    },
+    // backClick() {
+    //   this.$refs.scroll.scrollTo(0, 0); //$refs区别于使用document.queryselector，$refs只获取当前vue文件内的元素
+    // },
     contentScroll(position) {
-      // console.log(position);
       this.isShow = -position.y > 1000;
       this.isTabFixed = -position.y > this.tabOffsetTop;
-      // this.saveY = position.y;
     },
     loadMore() {
       this.getHomeGoods(this.currentType);

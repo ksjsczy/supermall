@@ -1,6 +1,10 @@
 <template>
   <swiper :moveRatio="0.05">
-    <swiper-item v-for="item in topImages" class="swiper-item">
+    <swiper-item
+      v-for="(item, index) in topImages"
+      class="swiper-item"
+      :key="index"
+    >
       <img :src="item" alt="" />
     </swiper-item>
   </swiper>
