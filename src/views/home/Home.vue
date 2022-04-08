@@ -9,7 +9,7 @@
       v-show="isTabFixed"
     ></tab-control>
     <scroll
-      class="content"
+      class="content ignore"
       ref="scroll"
       :probe-type="3"
       :click="true"
@@ -167,6 +167,7 @@ export default {
   /* z-index: 20; */
   background-color: var(--color-tint);
   color: #fff;
+  font-size: 16px;
 }
 .tab-control {
   position: relative;
@@ -183,5 +184,8 @@ export default {
   left: 0;
   right: 0;
   overflow: hidden;
+}
+.ignore {
+  bottom: 49px;
 }
 </style>

@@ -21,6 +21,11 @@ export default {
   border: 2px solid #aaa;
 }
 
+.check-button img {
+  width: 16px;
+  height: 16px;
+}
+
 .checked {
   border-color: red;
   background-color: red;
