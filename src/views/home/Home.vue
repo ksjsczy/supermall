@@ -164,7 +164,7 @@ export default {
   left: 0;
   right: 0;
   top: 0; */
-  /* z-index: 20; */
+  /* z-index: 30; */
   background-color: var(--color-tint);
   color: #fff;
   font-size: 16px;
